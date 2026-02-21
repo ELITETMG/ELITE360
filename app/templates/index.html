@@ -1,0 +1,1303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Elite Technician Management Group</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link href="https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.css" rel="stylesheet">
+    <link href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-draw/v1.4.3/mapbox-gl-draw.css" rel="stylesheet">
+    <link href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v5.0.2/mapbox-gl-geocoder.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div id="app">
+        <div id="login-screen" class="screen">
+            <div class="login-container">
+                <div class="login-logo">
+                    <img src="/static/images/logo.png" alt="Elite Technician Management Group" class="login-logo-img">
+                </div>
+                <form id="login-form">
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-full">Sign In</button>
+                    <p id="login-error" class="error-text"></p>
+                </form>
+            </div>
+        </div>
+
+        <div id="main-screen" class="screen hidden">
+            <nav class="sidebar">
+                <div class="sidebar-header">
+                    <img src="/static/images/logo.png" alt="ETM Group" class="sidebar-logo-img">
+                </div>
+                <ul class="nav-links">
+                    <li><a href="#" data-page="dashboard" class="nav-link active">
+                        <span class="nav-icon">&#9632;</span> Dashboard
+                    </a></li>
+
+                    <li class="nav-category">
+                        <div class="nav-category-header" onclick="toggleNavCategory(this)">
+                            <span class="cat-icon">&#9881;</span>
+                            <span class="cat-label">Construction</span>
+                            <span class="cat-arrow">&#9662;</span>
+                        </div>
+                        <ul class="nav-category-items">
+                            <li><a href="#" data-page="projects" class="nav-link">
+                                <span class="nav-icon">&#9733;</span> Projects
+                            </a></li>
+                            <li><a href="#" data-page="map" class="nav-link">
+                                <span class="nav-icon">&#9673;</span> Map View
+                            </a></li>
+                            <li><a href="#" data-page="tasks" class="nav-link">
+                                <span class="nav-icon">&#9744;</span> Tasks
+                            </a></li>
+                            <li><a href="#" data-page="task-types" class="nav-link">
+                                <span class="nav-icon">&#128295;</span> Task Types
+                            </a></li>
+                        </ul>
+                    </li>
+
+                    <li class="nav-category">
+                        <div class="nav-category-header" onclick="toggleNavCategory(this)">
+                            <span class="cat-icon">&#128230;</span>
+                            <span class="cat-label">Field Operations</span>
+                            <span class="cat-arrow">&#9662;</span>
+                        </div>
+                        <ul class="nav-category-items">
+                            <li><a href="#" data-page="inspections" class="nav-link">
+                                <span class="nav-icon">&#9745;</span> Inspections
+                            </a></li>
+                            <li><a href="#" data-page="dispatch" class="nav-link">
+                                <span class="nav-icon">&#128666;</span> Dispatch
+                            </a></li>
+                            <li><a href="#" data-page="materials" class="nav-link">
+                                <span class="nav-icon">&#9783;</span> Materials
+                            </a></li>
+                            <li><a href="#" data-page="safety" class="nav-link">
+                                <span class="nav-icon">&#9888;</span> Safety
+                            </a></li>
+                        </ul>
+                    </li>
+
+                    <li class="nav-category">
+                        <div class="nav-category-header" onclick="toggleNavCategory(this)">
+                            <span class="cat-icon">&#128663;</span>
+                            <span class="cat-label">Assets & Fleet</span>
+                            <span class="cat-arrow">&#9662;</span>
+                        </div>
+                        <ul class="nav-category-items">
+                            <li><a href="#" data-page="assets" class="nav-link">
+                                <span class="nav-icon">&#128736;</span> Equipment
+                            </a></li>
+                            <li><a href="#" data-page="fleet" class="nav-link">
+                                <span class="nav-icon">&#128666;</span> Fleet
+                            </a></li>
+                        </ul>
+                    </li>
+
+                    <li class="nav-category">
+                        <div class="nav-category-header" onclick="toggleNavCategory(this)">
+                            <span class="cat-icon">&#128176;</span>
+                            <span class="cat-label">Finance</span>
+                            <span class="cat-arrow">&#9662;</span>
+                        </div>
+                        <ul class="nav-category-items">
+                            <li><a href="#" data-page="budget" class="nav-link">
+                                <span class="nav-icon">&#36;</span> Budget
+                            </a></li>
+                            <li><a href="#" data-page="billing" class="nav-link">
+                                <span class="nav-icon">&#128179;</span> Billing
+                            </a></li>
+                        </ul>
+                    </li>
+
+                    <li class="nav-category">
+                        <div class="nav-category-header" onclick="toggleNavCategory(this)">
+                            <span class="cat-icon">&#128202;</span>
+                            <span class="cat-label">Reports & Data</span>
+                            <span class="cat-arrow">&#9662;</span>
+                        </div>
+                        <ul class="nav-category-items">
+                            <li><a href="#" data-page="reports" class="nav-link">
+                                <span class="nav-icon">&#9776;</span> Reports
+                            </a></li>
+                            <li><a href="#" data-page="documents" class="nav-link">
+                                <span class="nav-icon">&#128196;</span> Documents
+                            </a></li>
+                            <li><a href="#" data-page="activity" class="nav-link">
+                                <span class="nav-icon">&#128276;</span> Activity
+                            </a></li>
+                            <li><a href="#" data-page="integrations" class="nav-link">
+                                <span class="nav-icon">&#128268;</span> Integrations
+                            </a></li>
+                        </ul>
+                    </li>
+
+                    <li class="nav-category">
+                        <div class="nav-category-header" onclick="toggleNavCategory(this)">
+                            <span class="cat-icon">&#128274;</span>
+                            <span class="cat-label">Administration</span>
+                            <span class="cat-arrow">&#9662;</span>
+                        </div>
+                        <ul class="nav-category-items">
+                            <li><a href="#" data-page="admin" class="nav-link">
+                                <span class="nav-icon">&#128101;</span> Users & Roles
+                            </a></li>
+                            <li><a href="#" data-page="hr" class="nav-link">
+                                <span class="nav-icon">&#128188;</span> Human Resources
+                            </a></li>
+                        </ul>
+                    </li>
+                </ul>
+                <div class="sidebar-footer">
+                    <div class="user-info">
+                        <span id="user-name">Admin</span>
+                        <span id="user-role" class="badge">admin</span>
+                    </div>
+                    <button id="logout-btn" class="btn btn-sm btn-ghost">Logout</button>
+                </div>
+            </nav>
+
+            <main class="content">
+                <div id="page-dashboard" class="page">
+                    <div class="page-header">
+                        <h2>Dashboard</h2>
+                    </div>
+                    <div class="stats-grid" id="stats-grid"></div>
+                    <div id="ai-insights-panel" class="card mt-4" style="display:none">
+                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
+                            <h3 style="margin:0">&#10024; AI Project Insights</h3>
+                            <button class="btn btn-sm btn-ghost" onclick="refreshAIInsights()" id="ai-refresh-btn">Refresh</button>
+                        </div>
+                        <div id="ai-summary" style="color:#CBD5E1;margin-bottom:1rem;font-size:0.9rem"></div>
+                        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem" id="ai-columns">
+                            <div>
+                                <h4 style="color:#EF4444;font-size:0.8rem;text-transform:uppercase;margin-bottom:0.5rem">&#9888; Risks</h4>
+                                <ul id="ai-risks" style="list-style:none;padding:0;font-size:0.85rem;color:#FCA5A5"></ul>
+                            </div>
+                            <div>
+                                <h4 style="color:#3B82F6;font-size:0.8rem;text-transform:uppercase;margin-bottom:0.5rem">&#9889; Recommendations</h4>
+                                <ul id="ai-recommendations" style="list-style:none;padding:0;font-size:0.85rem;color:#93C5FD"></ul>
+                            </div>
+                            <div>
+                                <h4 style="color:#10B981;font-size:0.8rem;text-transform:uppercase;margin-bottom:0.5rem">&#9733; Highlights</h4>
+                                <ul id="ai-highlights" style="list-style:none;padding:0;font-size:0.85rem;color:#6EE7B7"></ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="ai-briefing-panel" class="card mt-4" style="display:none">
+                        <h3 style="margin:0 0 0.75rem 0">&#128240; Daily Briefing</h3>
+                        <div id="ai-briefing-text" style="color:#CBD5E1;font-size:0.9rem;line-height:1.6"></div>
+                    </div>
+                    <div class="card mt-4">
+                        <h3>Recent Projects</h3>
+                        <div id="recent-projects"></div>
+                    </div>
+                </div>
+
+                <div id="page-projects" class="page hidden">
+                    <div class="page-header">
+                        <h2>Projects</h2>
+                        <button class="btn btn-primary" onclick="showCreateProject()">+ New Project</button>
+                    </div>
+                    <div id="projects-list" class="card-grid"></div>
+                </div>
+
+                <div id="page-map" class="page hidden">
+                    <div class="map-toolbar">
+                        <div class="map-toolbar-left">
+                            <select id="map-project-select" onchange="loadMapData()">
+                                <option value="">Select Project</option>
+                            </select>
+                            <select id="map-status-filter" onchange="loadMapData()">
+                                <option value="">All Statuses</option>
+                                <option value="not_started">Not Started</option>
+                                <option value="in_progress">In Progress</option>
+                                <option value="submitted">Submitted</option>
+                                <option value="approved">Approved</option>
+                                <option value="billed">Billed</option>
+                                <option value="rework">Rework</option>
+                            </select>
+                            <div class="basemap-switcher">
+                                <select id="basemap-select" onchange="switchBasemap(this.value)">
+                                    <option value="satellite-streets-v12">Satellite</option>
+                                    <option value="streets-v12">Streets</option>
+                                    <option value="dark-v11">Dark</option>
+                                    <option value="light-v11">Light</option>
+                                    <option value="outdoors-v12">Terrain</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="map-toolbar-right">
+                            <button class="btn btn-sm" id="btn-layers" onclick="toggleLayerPanel()" title="Layer controls">&#9776; Layers</button>
+                            <button class="btn btn-sm" id="btn-save-view" onclick="showSaveViewModal()" title="Save current map view">&#x2606; Views</button>
+                            <button class="btn btn-sm" id="btn-import" onclick="showImportModal()" title="Import tasks from CSV/GeoJSON">&#x1F4E5; Import</button>
+                            <button class="btn btn-sm" id="btn-select" onclick="toggleSelectMode()" title="Select multiple tasks">&#9745; Select</button>
+                            <button class="btn btn-sm" id="btn-measure" onclick="toggleMeasure()" title="Measure distance/area">&#x1F4CF; Measure</button>
+                            <button class="btn btn-sm" id="btn-locate" onclick="locateMe()" title="Find my location">&#x1F4CD; Locate</button>
+                        </div>
+                    </div>
+                    <div class="map-wrapper">
+                        <div id="map" class="map-container"></div>
+                        <div id="map-hover-popup" class="map-hover-popup hidden"></div>
+                        <div id="measurement-result" class="measurement-result hidden"></div>
+                        <div id="layer-panel" class="layer-panel hidden">
+                            <div class="layer-panel-header">
+                                <h4>Layers</h4>
+                                <button class="btn btn-ghost btn-sm" onclick="toggleLayerPanel()">&times;</button>
+                            </div>
+                            <div class="layer-panel-body">
+                                <div class="layer-group">
+                                    <label class="layer-toggle-row">
+                                        <input type="checkbox" id="toggle-spans" checked onchange="toggleLayer('spans')">
+                                        <span class="layer-swatch" style="background:#3B82F6;width:20px;height:3px;border-radius:2px"></span>
+                                        <span>Fiber Spans</span>
+                                    </label>
+                                    <div class="layer-slider-row">
+                                        <span>Opacity</span>
+                                        <input type="range" min="0" max="100" value="90" oninput="setLayerOpacity('spans', this.value)">
+                                    </div>
+                                    <div class="layer-slider-row">
+                                        <span>Width</span>
+                                        <input type="range" min="1" max="10" value="4" oninput="setLineWidth(this.value)">
+                                    </div>
+                                </div>
+                                <div class="layer-group">
+                                    <label class="layer-toggle-row">
+                                        <input type="checkbox" id="toggle-nodes" checked onchange="toggleLayer('nodes')">
+                                        <span class="layer-swatch" style="background:#10B981;width:12px;height:12px;border-radius:50%"></span>
+                                        <span>Nodes / Equipment</span>
+                                    </label>
+                                    <div class="layer-slider-row">
+                                        <span>Opacity</span>
+                                        <input type="range" min="0" max="100" value="90" oninput="setLayerOpacity('nodes', this.value)">
+                                    </div>
+                                </div>
+                                <div class="layer-group">
+                                    <label class="layer-toggle-row">
+                                        <input type="checkbox" id="toggle-drops" checked onchange="toggleLayer('drops')">
+                                        <span class="layer-swatch" style="background:#F59E0B;width:10px;height:10px;border-radius:50%"></span>
+                                        <span>Customer Drops</span>
+                                    </label>
+                                    <div class="layer-slider-row">
+                                        <span>Opacity</span>
+                                        <input type="range" min="0" max="100" value="85" oninput="setLayerOpacity('drops', this.value)">
+                                    </div>
+                                </div>
+                                <div class="layer-group">
+                                    <label class="layer-toggle-row">
+                                        <input type="checkbox" id="toggle-zones" checked onchange="toggleLayer('zones')">
+                                        <span class="layer-swatch" style="background:#8B5CF6;width:14px;height:14px;border-radius:3px;border:2px dashed #8B5CF6;background:transparent"></span>
+                                        <span>Work Zones</span>
+                                    </label>
+                                    <div class="layer-slider-row">
+                                        <span>Opacity</span>
+                                        <input type="range" min="0" max="100" value="15" oninput="setLayerOpacity('zones', this.value)">
+                                    </div>
+                                </div>
+                                <div class="layer-group">
+                                    <label class="layer-toggle-row">
+                                        <input type="checkbox" id="toggle-labels" checked onchange="toggleLabels(this.checked)">
+                                        <span>Labels</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="bulk-actions-bar" class="bulk-actions-bar hidden">
+                            <span id="bulk-count">0 tasks selected</span>
+                            <select id="bulk-status-select">
+                                <option value="">Change Status...</option>
+                                <option value="not_started">Not Started</option>
+                                <option value="in_progress">In Progress</option>
+                                <option value="submitted">Submitted</option>
+                                <option value="approved">Approved</option>
+                            </select>
+                            <button class="btn btn-primary btn-sm" onclick="applyBulkUpdate()">Apply</button>
+                            <button class="btn btn-ghost btn-sm" onclick="clearSelection()">Clear</button>
+                        </div>
+                        <div id="map-legend" class="map-legend"></div>
+                        <div id="side-panel" class="side-panel hidden">
+                            <div class="side-panel-header">
+                                <h3 id="panel-title">Task Detail</h3>
+                                <button class="btn btn-ghost btn-sm" onclick="closeSidePanel()">&times;</button>
+                            </div>
+                            <div id="panel-content" class="side-panel-content"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="page-tasks" class="page hidden">
+                    <div class="page-header">
+                        <h2>Tasks</h2>
+                        <div class="header-controls">
+                            <select id="task-project-select" onchange="loadTasks()">
+                                <option value="">Select Project</option>
+                            </select>
+                            <button class="btn btn-primary" onclick="showCreateTask()">+ New Task</button>
+                        </div>
+                    </div>
+                    <div id="tasks-table-container" class="card">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Type</th>
+                                    <th>Status</th>
+                                    <th>Priority</th>
+                                    <th>Planned</th>
+                                    <th>Actual</th>
+                                    <th>Cost</th>
+                                    <th>Progress</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tasks-tbody"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div id="page-task-types" class="page hidden">
+                    <div class="page-header">
+                        <h2>Task Types</h2>
+                        <button class="btn btn-primary" onclick="showCreateTaskType()">+ New Type</button>
+                    </div>
+                    <div id="task-types-list" class="card-grid"></div>
+                </div>
+
+                <div id="page-reports" class="page hidden">
+                    <div class="page-header">
+                        <h2>Reports</h2>
+                        <div class="header-controls">
+                            <select id="report-project-select" onchange="loadReports()">
+                                <option value="">All Projects</option>
+                            </select>
+                            <button class="btn btn-sm" onclick="loadReportAISummary()" title="AI Summary">&#10024; AI Summary</button>
+                        </div>
+                    </div>
+                    <div id="report-ai-summary" class="card" style="display:none;margin-bottom:1rem;border-left:3px solid #8B5CF6">
+                        <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.5rem">
+                            <span style="color:#8B5CF6">&#10024;</span>
+                            <strong style="color:#C4B5FD;font-size:0.85rem">AI Analysis</strong>
+                        </div>
+                        <div id="report-ai-text" style="color:#CBD5E1;font-size:0.85rem;line-height:1.5"></div>
+                    </div>
+                    <div class="card mt-4" id="report-progress-status">
+                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+                            <h3>Progress by Status</h3>
+                            <button class="btn btn-sm btn-ghost" onclick="exportReport('progress')">Export CSV</button>
+                        </div>
+                        <div id="chart-progress-status"></div>
+                    </div>
+                    <div class="card mt-4" id="report-progress-type">
+                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+                            <h3>Progress by Task Type</h3>
+                            <button class="btn btn-sm btn-ghost" onclick="exportReport('progress')">Export CSV</button>
+                        </div>
+                        <div id="chart-progress-type"></div>
+                    </div>
+                    <div class="card mt-4" id="report-productivity">
+                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+                            <h3>Recent Productivity (Last 14 Days)</h3>
+                            <button class="btn btn-sm btn-ghost" onclick="exportReport('productivity')">Export CSV</button>
+                        </div>
+                        <div id="chart-productivity"></div>
+                    </div>
+                    <div class="card mt-4" id="report-crew">
+                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+                            <h3>Crew Performance</h3>
+                            <button class="btn btn-sm btn-ghost" onclick="exportReport('crew')">Export CSV</button>
+                        </div>
+                        <div id="table-crew"></div>
+                    </div>
+                </div>
+
+                <div id="page-inspections" class="page hidden">
+                    <div class="page-header">
+                        <h2>Inspections</h2>
+                    </div>
+                    <div id="inspections-queue" class="card">
+                        <h3>Pending Inspection Queue</h3>
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Task</th>
+                                    <th>Template</th>
+                                    <th>Inspector</th>
+                                    <th>Status</th>
+                                    <th>Created</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="inspections-tbody"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div id="page-budget" class="page hidden">
+                    <div class="page-header">
+                        <h2>Budget & Cost Tracking</h2>
+                        <div class="header-controls">
+                            <select id="budget-project-select" onchange="loadBudget()">
+                                <option value="">Select Project</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="budget-overview" id="budget-overview"></div>
+                    <div class="card mt-4">
+                        <h3>Cost Breakdown by Status</h3>
+                        <div id="cost-by-status"></div>
+                    </div>
+                    <div class="card mt-4">
+                        <h3>Cost Breakdown by Task Type</h3>
+                        <div id="cost-by-type"></div>
+                    </div>
+                </div>
+
+                <div id="page-materials" class="page hidden">
+                    <div class="page-header">
+                        <h2>Materials & Inventory</h2>
+                        <button class="btn btn-primary" onclick="showCreateMaterial()">+ Add Material</button>
+                    </div>
+                    <div id="low-stock-alerts" class="alerts-container"></div>
+                    <div id="materials-list" class="card">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Material</th>
+                                    <th>SKU</th>
+                                    <th>Category</th>
+                                    <th>Unit Cost</th>
+                                    <th>Stock</th>
+                                    <th>Min Stock</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="materials-tbody"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div id="page-documents" class="page hidden">
+                    <div class="page-header">
+                        <h2>Document Management</h2>
+                        <div class="header-controls">
+                            <select id="doc-project-select" onchange="loadDocuments()">
+                                <option value="">Select Project</option>
+                            </select>
+                            <select id="doc-category-filter" onchange="loadDocuments()">
+                                <option value="">All Categories</option>
+                                <option value="design">Design</option>
+                                <option value="permit">Permit</option>
+                                <option value="contract">Contract</option>
+                                <option value="report">Report</option>
+                                <option value="as-built">As-Built</option>
+                            </select>
+                            <button class="btn btn-primary" onclick="showUploadDocument()">+ Upload Document</button>
+                        </div>
+                    </div>
+                    <div id="documents-grid" class="card-grid"></div>
+                </div>
+
+                <div id="page-activity" class="page hidden">
+                    <div class="page-header">
+                        <h2>Activity Feed</h2>
+                        <div class="header-controls">
+                            <select id="activity-project-select" onchange="loadActivities()">
+                                <option value="">Select Project</option>
+                            </select>
+                            <select id="activity-type-filter" onchange="loadActivities()">
+                                <option value="">All Types</option>
+                                <option value="task">Tasks</option>
+                                <option value="inspection">Inspections</option>
+                                <option value="import">Imports</option>
+                                <option value="document">Documents</option>
+                                <option value="budget">Budget</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div id="activity-feed" class="activity-feed"></div>
+                </div>
+
+                <div id="page-integrations" class="page hidden">
+                    <div class="page-header">
+                        <h2>GIS Integrations</h2>
+                        <div class="header-controls">
+                            <select id="integrations-project-select" onchange="loadIntegrations()">
+                                <option value="">Select Project</option>
+                            </select>
+                        </div>
+                    </div>
+                    <p class="page-subtitle" style="color:var(--text-secondary);margin-bottom:1.5rem">Export your fiber network data to professional GIS platforms and analytics tools.</p>
+                    <div id="integrations-grid" class="card-grid"></div>
+                </div>
+
+                <div id="page-billing" class="page hidden">
+                    <div class="page-header">
+                        <h2>Billing & Invoicing</h2>
+                        <div class="header-controls">
+                            <select id="billing-project-select" onchange="loadInvoices()">
+                                <option value="">All Projects</option>
+                            </select>
+                            <button class="btn btn-primary" onclick="showCreateInvoice()">+ New Invoice</button>
+                        </div>
+                    </div>
+                    <div class="billing-kpi-row" id="billing-kpis"></div>
+                    <div class="billing-tabs">
+                        <button class="billing-tab active" data-billing-tab="invoices" onclick="switchBillingTab('invoices')">Invoices</button>
+                        <button class="billing-tab" data-billing-tab="rate-cards" onclick="switchBillingTab('rate-cards')">Rate Cards</button>
+                        <button class="billing-tab" data-billing-tab="change-orders" onclick="switchBillingTab('change-orders')">Change Orders</button>
+                    </div>
+                    <div id="billing-tab-invoices" class="billing-tab-content">
+                        <div class="card">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Invoice #</th>
+                                        <th>Title</th>
+                                        <th>Project</th>
+                                        <th>Status</th>
+                                        <th>Subtotal</th>
+                                        <th>Total</th>
+                                        <th>Balance Due</th>
+                                        <th>Due Date</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="billing-invoices-tbody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div id="billing-tab-rate-cards" class="billing-tab-content hidden">
+                        <div style="margin-bottom:1rem;text-align:right">
+                            <button class="btn btn-primary btn-sm" onclick="showCreateRateCard()">+ Add Rate Card</button>
+                        </div>
+                        <div class="card">
+                            <table class="data-table" id="rate-cards-table">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Category</th>
+                                        <th>Unit</th>
+                                        <th>Unit Rate</th>
+                                        <th>Labor</th>
+                                        <th>Material</th>
+                                        <th>Equipment</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="billing-ratecards-tbody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div id="billing-tab-change-orders" class="billing-tab-content hidden">
+                        <div style="margin-bottom:1rem;text-align:right">
+                            <button class="btn btn-primary btn-sm" onclick="showCreateChangeOrder()">+ New Change Order</button>
+                        </div>
+                        <div class="card">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>CO #</th>
+                                        <th>Title</th>
+                                        <th>Reason</th>
+                                        <th>Amount</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="billing-cos-tbody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="page-dispatch" class="page hidden">
+                    <div class="page-header">
+                        <h2>Dispatch Board</h2>
+                        <div class="header-controls">
+                            <select id="dispatch-project-select" onchange="loadDispatchBoard()">
+                                <option value="">All Projects</option>
+                            </select>
+                            <div class="dispatch-date-nav">
+                                <button class="btn btn-sm" onclick="dispatchDateNav(-7)">&laquo;</button>
+                                <button class="btn btn-sm" onclick="dispatchDateNav(-1)">&lsaquo;</button>
+                                <span id="dispatch-date-range" class="dispatch-date-label"></span>
+                                <button class="btn btn-sm" onclick="dispatchDateNav(1)">&rsaquo;</button>
+                                <button class="btn btn-sm" onclick="dispatchDateNav(7)">&raquo;</button>
+                                <button class="btn btn-sm" onclick="dispatchGoToday()">Today</button>
+                            </div>
+                            <button class="btn btn-primary" onclick="showCreateJob()">+ New Job</button>
+                        </div>
+                    </div>
+                    <div class="dispatch-stats-row" id="dispatch-stats"></div>
+                    <div class="dispatch-board">
+                        <div class="dispatch-timeline" id="dispatch-timeline">
+                            <div class="dispatch-timeline-header" id="dispatch-timeline-header"></div>
+                            <div class="dispatch-timeline-body" id="dispatch-timeline-body"></div>
+                        </div>
+                        <div class="dispatch-unassigned" id="dispatch-unassigned">
+                            <h4>Unassigned Jobs</h4>
+                            <div id="unassigned-jobs-list"></div>
+                        </div>
+                    </div>
+                    <div class="dispatch-crews-panel">
+                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
+                            <h3>Crews</h3>
+                            <button class="btn btn-sm btn-primary" onclick="showCreateCrew()">+ Add Crew</button>
+                        </div>
+                        <div id="dispatch-crews-list" class="card-grid"></div>
+                    </div>
+                </div>
+
+                <div id="page-safety" class="page hidden">
+                    <div class="page-header">
+                        <h2>Safety Management</h2>
+                        <div class="header-controls">
+                            <button class="btn btn-primary" onclick="showReportIncident()">+ Report Incident</button>
+                        </div>
+                    </div>
+                    <div class="stats-grid" id="safety-stats-grid"></div>
+                    <div class="assets-tabs" style="margin-bottom:1rem">
+                        <button class="admin-tab active" data-safety-tab="incidents" onclick="switchSafetyTab('incidents')">Incidents</button>
+                        <button class="admin-tab" data-safety-tab="inspections" onclick="switchSafetyTab('inspections')">Inspections</button>
+                        <button class="admin-tab" data-safety-tab="talks" onclick="switchSafetyTab('talks')">Toolbox Talks</button>
+                        <button class="admin-tab" data-safety-tab="training" onclick="switchSafetyTab('training')">Training & Certs</button>
+                        <button class="admin-tab" data-safety-tab="ppe" onclick="switchSafetyTab('ppe')">PPE Compliance</button>
+                        <button class="admin-tab" data-safety-tab="corrective" onclick="switchSafetyTab('corrective')">Corrective Actions</button>
+                        <button class="admin-tab" data-safety-tab="osha" onclick="switchSafetyTab('osha')">OSHA Records</button>
+                        <button class="admin-tab" data-safety-tab="ai" onclick="switchSafetyTab('ai')">AI Analysis</button>
+                    </div>
+                    <div id="safety-tab-incidents" class="assets-tab-content">
+                        <div class="card">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Title</th>
+                                        <th>Type</th>
+                                        <th>Severity</th>
+                                        <th>Status</th>
+                                        <th>Near Miss</th>
+                                        <th>OSHA Recordable</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="safety-incidents-tbody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div id="safety-tab-inspections" class="assets-tab-content hidden">
+                        <div style="margin-bottom:1rem">
+                            <button class="btn btn-primary btn-sm" onclick="showCreateSafetyInspection()">+ New Inspection</button>
+                        </div>
+                        <div class="card">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Template</th>
+                                        <th>Inspector</th>
+                                        <th>Score</th>
+                                        <th>Status</th>
+                                        <th>Findings</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="safety-inspections-tbody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div id="safety-tab-talks" class="assets-tab-content hidden">
+                        <div style="margin-bottom:1rem">
+                            <button class="btn btn-primary btn-sm" onclick="showCreateToolboxTalk()">+ New Talk</button>
+                        </div>
+                        <div class="card">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Topic</th>
+                                        <th>Category</th>
+                                        <th>Presenter</th>
+                                        <th>Duration</th>
+                                        <th>Attendees</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="safety-talks-tbody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div id="safety-tab-training" class="assets-tab-content hidden">
+                        <div style="margin-bottom:1rem">
+                            <button class="btn btn-primary btn-sm" onclick="showAddSafetyTraining()">+ Add Training</button>
+                        </div>
+                        <div class="card">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Employee</th>
+                                        <th>Training Name</th>
+                                        <th>Type</th>
+                                        <th>Provider</th>
+                                        <th>Completed</th>
+                                        <th>Expires</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="safety-training-tbody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div id="safety-tab-ppe" class="assets-tab-content hidden">
+                        <div class="card">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Employee</th>
+                                        <th>PPE Type</th>
+                                        <th>Status</th>
+                                        <th>Condition</th>
+                                        <th>Issued</th>
+                                        <th>Last Inspected</th>
+                                        <th>Next Due</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="safety-ppe-tbody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div id="safety-tab-corrective" class="assets-tab-content hidden">
+                        <div class="card">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Title</th>
+                                        <th>Related Incident</th>
+                                        <th>Assigned To</th>
+                                        <th>Priority</th>
+                                        <th>Status</th>
+                                        <th>Due Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="safety-corrective-tbody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div id="safety-tab-osha" class="assets-tab-content hidden">
+                        <div class="card">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Year</th>
+                                        <th>Hours Worked</th>
+                                        <th>Employees</th>
+                                        <th>Total Incidents</th>
+                                        <th>Recordable</th>
+                                        <th>DART Cases</th>
+                                        <th>TRIR</th>
+                                        <th>DART Rate</th>
+                                        <th>EMR</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="safety-osha-tbody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div id="safety-tab-ai" class="assets-tab-content hidden">
+                        <div class="card" id="safety-ai-panel">
+                            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
+                                <h3 style="margin:0">AI Safety Risk Analysis</h3>
+                                <button class="btn btn-sm btn-ghost" onclick="loadSafetyAI()">Refresh</button>
+                            </div>
+                            <div id="safety-ai-summary" style="color:#CBD5E1;margin-bottom:1rem;font-size:0.9rem">Click Refresh to generate AI-powered safety risk analysis...</div>
+                            <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+                                <div>
+                                    <h4 style="color:#EF4444;font-size:0.8rem;text-transform:uppercase;margin-bottom:0.5rem">Risks</h4>
+                                    <ul id="safety-ai-risks" class="ai-list"></ul>
+                                </div>
+                                <div>
+                                    <h4 style="color:#10B981;font-size:0.8rem;text-transform:uppercase;margin-bottom:0.5rem">Recommendations</h4>
+                                    <ul id="safety-ai-recs" class="ai-list"></ul>
+                                </div>
+                            </div>
+                            <div style="margin-top:1rem;text-align:center">
+                                <div style="font-size:0.8rem;color:#94A3B8;text-transform:uppercase;margin-bottom:0.25rem">Safety Score</div>
+                                <div id="safety-ai-score" style="font-size:2rem;font-weight:700;color:#10B981">--</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="page-hr" class="page hidden">
+                    <div class="page-header">
+                        <h2>Human Resources</h2>
+                        <div class="header-controls">
+                            <button class="btn btn-primary" onclick="showAddEmployee()">+ Add Employee</button>
+                        </div>
+                    </div>
+                    <div class="stats-grid" id="hr-stats-grid"></div>
+                    <div class="assets-tabs" style="margin-bottom:1rem">
+                        <button class="admin-tab active" data-hr-tab="employees" onclick="switchHRTab('employees')">Employees</button>
+                        <button class="admin-tab" data-hr-tab="time" onclick="switchHRTab('time')">Time & Attendance</button>
+                        <button class="admin-tab" data-hr-tab="pto" onclick="switchHRTab('pto')">PTO/Leave</button>
+                        <button class="admin-tab" data-hr-tab="onboarding" onclick="switchHRTab('onboarding')">Onboarding</button>
+                        <button class="admin-tab" data-hr-tab="performance" onclick="switchHRTab('performance')">Performance</button>
+                        <button class="admin-tab" data-hr-tab="training" onclick="switchHRTab('training')">Training</button>
+                        <button class="admin-tab" data-hr-tab="compensation" onclick="switchHRTab('compensation')">Compensation</button>
+                        <button class="admin-tab" data-hr-tab="skills" onclick="switchHRTab('skills')">Skills Matrix</button>
+                        <button class="admin-tab" data-hr-tab="ai" onclick="switchHRTab('ai')">AI Analytics</button>
+                    </div>
+                    <div id="hr-tab-employees" class="assets-tab-content">
+                        <div class="card">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Employee ID</th>
+                                        <th>Name</th>
+                                        <th>Email</th>
+                                        <th>Job Title</th>
+                                        <th>Department</th>
+                                        <th>Status</th>
+                                        <th>Hire Date</th>
+                                        <th>Phone</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="hr-employees-tbody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div id="hr-tab-time" class="assets-tab-content hidden">
+                        <div class="card">
+                            <div style="display:flex;justify-content:flex-end;margin-bottom:1rem">
+                                <button class="btn btn-primary btn-sm" onclick="showClockIn()">+ Clock In</button>
+                            </div>
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Employee</th>
+                                        <th>Date</th>
+                                        <th>Clock In</th>
+                                        <th>Clock Out</th>
+                                        <th>Break</th>
+                                        <th>Total Hours</th>
+                                        <th>OT</th>
+                                        <th>Type</th>
+                                        <th>Approved</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="hr-time-tbody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div id="hr-tab-pto" class="assets-tab-content hidden">
+                        <div class="card">
+                            <div style="display:flex;justify-content:flex-end;margin-bottom:1rem">
+                                <button class="btn btn-primary btn-sm" onclick="showRequestPTO()">+ Request PTO</button>
+                            </div>
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Employee</th>
+                                        <th>Type</th>
+                                        <th>Start</th>
+                                        <th>End</th>
+                                        <th>Days</th>
+                                        <th>Status</th>
+                                        <th>Reason</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="hr-pto-tbody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div id="hr-tab-onboarding" class="assets-tab-content hidden">
+                        <div id="hr-onboarding-content"></div>
+                    </div>
+                    <div id="hr-tab-performance" class="assets-tab-content hidden">
+                        <div class="card">
+                            <div style="display:flex;justify-content:flex-end;margin-bottom:1rem">
+                                <button class="btn btn-primary btn-sm" onclick="showNewReview()">+ New Review</button>
+                            </div>
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Employee</th>
+                                        <th>Period</th>
+                                        <th>Rating</th>
+                                        <th>Technical</th>
+                                        <th>Safety</th>
+                                        <th>Teamwork</th>
+                                        <th>Quality</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="hr-performance-tbody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div id="hr-tab-training" class="assets-tab-content hidden">
+                        <div class="card">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Employee</th>
+                                        <th>Training Name</th>
+                                        <th>Type</th>
+                                        <th>Provider</th>
+                                        <th>Completed</th>
+                                        <th>Expires</th>
+                                        <th>Required</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="hr-training-tbody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div id="hr-tab-compensation" class="assets-tab-content hidden">
+                        <div class="card">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Employee</th>
+                                        <th>Pay Type</th>
+                                        <th>Hourly Rate</th>
+                                        <th>OT Rate</th>
+                                        <th>Per Diem</th>
+                                        <th>Effective Date</th>
+                                        <th>Current</th>
+                                        <th>Reason</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="hr-compensation-tbody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div id="hr-tab-skills" class="assets-tab-content hidden">
+                        <div id="hr-skills-content"></div>
+                    </div>
+                    <div id="hr-tab-ai" class="assets-tab-content hidden">
+                        <div class="card">
+                            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
+                                <h3 style="margin:0">&#10024; AI Workforce Analytics</h3>
+                                <button class="btn btn-sm btn-ghost" onclick="loadHRAI()">Refresh</button>
+                            </div>
+                            <p id="hr-ai-summary" style="color:#CBD5E1;margin-bottom:1rem">Click Refresh to generate AI workforce analysis.</p>
+                            <div style="display:grid;grid-template-columns:1fr 1fr auto;gap:1rem">
+                                <div>
+                                    <h4 style="color:#3B82F6;font-size:0.8rem;text-transform:uppercase;margin-bottom:0.5rem">&#9889; Insights</h4>
+                                    <ul id="hr-ai-insights" class="ai-list" style="list-style:none;padding:0;font-size:0.85rem;color:#93C5FD"></ul>
+                                </div>
+                                <div>
+                                    <h4 style="color:#10B981;font-size:0.8rem;text-transform:uppercase;margin-bottom:0.5rem">&#9733; Recommendations</h4>
+                                    <ul id="hr-ai-recs" class="ai-list" style="list-style:none;padding:0;font-size:0.85rem;color:#6EE7B7"></ul>
+                                </div>
+                                <div style="text-align:center;padding:1rem">
+                                    <div style="font-size:0.8rem;color:#94A3B8;text-transform:uppercase;margin-bottom:0.25rem">Workforce Score</div>
+                                    <div id="hr-ai-score" style="font-size:2rem;font-weight:700;color:#10B981">--</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="page-assets" class="page hidden">
+                    <div class="page-header">
+                        <h2>Assets & Equipment</h2>
+                        <div class="header-controls">
+                            <select id="assets-status-filter" onchange="loadAssets()" class="form-control" style="width:auto;display:inline-block;margin-right:0.5rem">
+                                <option value="">All Status</option>
+                                <option value="available">Available</option>
+                                <option value="assigned">Assigned</option>
+                                <option value="in_use">In Use</option>
+                                <option value="maintenance">Maintenance</option>
+                                <option value="damaged">Damaged</option>
+                                <option value="retired">Retired</option>
+                            </select>
+                            <select id="assets-category-filter" onchange="loadAssets()" class="form-control" style="width:auto;display:inline-block;margin-right:0.5rem">
+                                <option value="">All Categories</option>
+                            </select>
+                            <button class="btn btn-primary" onclick="showCreateAsset()">+ Add Asset</button>
+                        </div>
+                    </div>
+                    <div class="stats-grid" id="assets-stats-grid"></div>
+                    <div class="assets-tabs" style="margin-bottom:1rem">
+                        <button class="admin-tab active" data-assets-tab="list" onclick="switchAssetsTab('list')">Asset List</button>
+                        <button class="admin-tab" data-assets-tab="map" onclick="switchAssetsTab('map')">GIS Map</button>
+                        <button class="admin-tab" data-assets-tab="ai" onclick="switchAssetsTab('ai')">AI Insights</button>
+                    </div>
+                    <div id="assets-tab-list" class="assets-tab-content">
+                        <div class="card">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Asset Tag</th>
+                                        <th>Name</th>
+                                        <th>Category</th>
+                                        <th>Status</th>
+                                        <th>Condition</th>
+                                        <th>Value</th>
+                                        <th>Assigned To</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="assets-tbody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div id="assets-tab-map" class="assets-tab-content hidden">
+                        <div class="card" style="padding:0;overflow:hidden;border-radius:12px">
+                            <div id="assets-map" style="width:100%;height:500px"></div>
+                        </div>
+                        <div class="card mt-4" id="assets-map-legend">
+                            <h4 style="margin:0 0 0.5rem 0;font-size:0.9rem">Map Legend</h4>
+                            <div style="display:flex;gap:1.5rem;flex-wrap:wrap;font-size:0.8rem;color:#94A3B8">
+                                <span><span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:#10B981;margin-right:4px"></span> Active Technicians</span>
+                                <span><span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:#3B82F6;margin-right:4px"></span> Fleet Vehicles</span>
+                                <span><span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:#F59E0B;margin-right:4px"></span> Equipment</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="assets-tab-ai" class="assets-tab-content hidden">
+                        <div class="card" id="assets-ai-panel">
+                            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
+                                <h3 style="margin:0">AI Asset Insights</h3>
+                                <button class="btn btn-sm btn-ghost" onclick="loadAssetAIInsights()" id="assets-ai-refresh-btn">Refresh</button>
+                            </div>
+                            <div id="assets-ai-summary" style="color:#CBD5E1;margin-bottom:1rem;font-size:0.9rem">Click Refresh to generate AI-powered asset analysis...</div>
+                            <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem" id="assets-ai-columns">
+                                <div>
+                                    <h4 style="color:#EF4444;font-size:0.8rem;text-transform:uppercase;margin-bottom:0.5rem">Risks</h4>
+                                    <ul id="assets-ai-risks" class="ai-list"></ul>
+                                </div>
+                                <div>
+                                    <h4 style="color:#10B981;font-size:0.8rem;text-transform:uppercase;margin-bottom:0.5rem">Recommendations</h4>
+                                    <ul id="assets-ai-recs" class="ai-list"></ul>
+                                </div>
+                            </div>
+                            <div style="margin-top:1rem;padding-top:1rem;border-top:1px solid #334155">
+                                <div style="display:flex;justify-content:space-between;align-items:center">
+                                    <div>
+                                        <span style="color:#94A3B8;font-size:0.8rem">Utilization Score</span>
+                                        <div id="assets-ai-utilization" style="font-size:1.5rem;font-weight:700;color:#3B82F6">--</div>
+                                    </div>
+                                    <div>
+                                        <span style="color:#94A3B8;font-size:0.8rem">Depreciation Analysis</span>
+                                        <div id="assets-ai-depreciation" style="font-size:0.85rem;color:#CBD5E1">--</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="page-fleet" class="page hidden">
+                    <div class="page-header">
+                        <h2>Fleet Management</h2>
+                        <div class="header-controls">
+                            <button class="btn btn-sm" onclick="switchFleetTab('map')" id="fleet-map-toggle">Live Map</button>
+                            <button class="btn btn-primary" onclick="showCreateVehicle()">+ Add Vehicle</button>
+                        </div>
+                    </div>
+                    <div class="stats-grid" id="fleet-stats-grid"></div>
+                    <div class="assets-tabs" style="margin-bottom:1rem">
+                        <button class="admin-tab active" data-fleet-tab="vehicles" onclick="switchFleetTab('vehicles')">Vehicles</button>
+                        <button class="admin-tab" data-fleet-tab="map" onclick="switchFleetTab('map')">Live Map</button>
+                        <button class="admin-tab" data-fleet-tab="techs" onclick="switchFleetTab('techs')">Technicians</button>
+                        <button class="admin-tab" data-fleet-tab="integrations" onclick="switchFleetTab('integrations')">Telematics</button>
+                        <button class="admin-tab" data-fleet-tab="ai" onclick="switchFleetTab('ai')">AI Insights</button>
+                    </div>
+                    <div id="fleet-tab-vehicles" class="fleet-tab-content">
+                        <div class="card">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Vehicle</th>
+                                        <th>Type</th>
+                                        <th>Status</th>
+                                        <th>Driver</th>
+                                        <th>Odometer</th>
+                                        <th>Fuel</th>
+                                        <th>Location</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="fleet-vehicles-tbody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div id="fleet-tab-map" class="fleet-tab-content hidden">
+                        <div class="card" style="padding:0;overflow:hidden;border-radius:12px">
+                            <div id="fleet-map" style="width:100%;height:550px"></div>
+                        </div>
+                        <div class="card mt-4" id="fleet-map-legend">
+                            <h4 style="margin:0 0 0.5rem 0;font-size:0.9rem">Fleet & Technician Locations</h4>
+                            <div style="display:flex;gap:1.5rem;flex-wrap:wrap;font-size:0.8rem;color:#94A3B8">
+                                <span><span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:#3B82F6;margin-right:4px"></span> Vehicles (Active)</span>
+                                <span><span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:#EF4444;margin-right:4px"></span> Vehicles (In Shop)</span>
+                                <span><span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:#10B981;margin-right:4px"></span> Technicians (Checked In)</span>
+                                <span><span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:#F59E0B;margin-right:4px"></span> Samsara / GeoTab / Verizon</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="fleet-tab-techs" class="fleet-tab-content hidden">
+                        <div class="card">
+                            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
+                                <h3 style="margin:0">Active Technician Locations</h3>
+                                <button class="btn btn-sm" onclick="loadTechLocations()">Refresh</button>
+                            </div>
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Technician</th>
+                                        <th>Latitude</th>
+                                        <th>Longitude</th>
+                                        <th>Speed</th>
+                                        <th>Battery</th>
+                                        <th>Source</th>
+                                        <th>Last Update</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="fleet-techs-tbody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div id="fleet-tab-integrations" class="fleet-tab-content hidden">
+                        <div class="card">
+                            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
+                                <h3 style="margin:0">Telematics Integrations</h3>
+                                <button class="btn btn-primary btn-sm" onclick="showAddIntegration()">+ Connect Provider</button>
+                            </div>
+                            <div id="fleet-integrations-list"></div>
+                        </div>
+                        <div class="card mt-4" style="border:1px dashed #334155">
+                            <h4 style="margin:0 0 1rem 0;color:#94A3B8">Supported Providers</h4>
+                            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem">
+                                <div class="provider-card" onclick="showAddIntegration('samsara')">
+                                    <div style="font-size:1.5rem;margin-bottom:0.5rem">&#128666;</div>
+                                    <strong>Samsara</strong>
+                                    <p style="color:#94A3B8;font-size:0.8rem;margin:0.25rem 0 0 0">GPS tracking, ELD, dashcams, sensors</p>
+                                </div>
+                                <div class="provider-card" onclick="showAddIntegration('geotab')">
+                                    <div style="font-size:1.5rem;margin-bottom:0.5rem">&#127760;</div>
+                                    <strong>GeoTab</strong>
+                                    <p style="color:#94A3B8;font-size:0.8rem;margin:0.25rem 0 0 0">Fleet tracking, driver behavior, compliance</p>
+                                </div>
+                                <div class="provider-card" onclick="showAddIntegration('verizon_connect')">
+                                    <div style="font-size:1.5rem;margin-bottom:0.5rem">&#128225;</div>
+                                    <strong>Verizon Connect</strong>
+                                    <p style="color:#94A3B8;font-size:0.8rem;margin:0.25rem 0 0 0">Fleetmatics GPS, route optimization</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="fleet-tab-ai" class="fleet-tab-content hidden">
+                        <div class="card" id="fleet-ai-panel">
+                            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
+                                <h3 style="margin:0">AI Fleet Insights</h3>
+                                <button class="btn btn-sm btn-ghost" onclick="loadFleetAIInsights()">Refresh</button>
+                            </div>
+                            <div id="fleet-ai-summary" style="color:#CBD5E1;margin-bottom:1rem;font-size:0.9rem">Click Refresh to generate AI-powered fleet analysis...</div>
+                            <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+                                <div>
+                                    <h4 style="color:#EF4444;font-size:0.8rem;text-transform:uppercase;margin-bottom:0.5rem">Risks</h4>
+                                    <ul id="fleet-ai-risks" class="ai-list"></ul>
+                                </div>
+                                <div>
+                                    <h4 style="color:#10B981;font-size:0.8rem;text-transform:uppercase;margin-bottom:0.5rem">Recommendations</h4>
+                                    <ul id="fleet-ai-recs" class="ai-list"></ul>
+                                </div>
+                            </div>
+                            <div style="margin-top:1rem;padding-top:1rem;border-top:1px solid #334155">
+                                <span style="color:#94A3B8;font-size:0.8rem">Fleet Efficiency Score</span>
+                                <div id="fleet-ai-efficiency" style="font-size:1.5rem;font-weight:700;color:#3B82F6">--</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="page-admin" class="page hidden">
+                    <div class="page-header">
+                        <h2>Administration</h2>
+                        <div class="header-controls">
+                            <button class="btn btn-primary" onclick="showCreateUser()">+ Add User</button>
+                            <button class="btn btn-sm" onclick="showInviteUser()">Invite User</button>
+                        </div>
+                    </div>
+                    <div class="admin-tabs">
+                        <button class="admin-tab active" data-admin-tab="users" onclick="switchAdminTab('users')">Users</button>
+                        <button class="admin-tab" data-admin-tab="roles" onclick="switchAdminTab('roles')">Roles</button>
+                        <button class="admin-tab" data-admin-tab="org" onclick="switchAdminTab('org')">Organization</button>
+                        <button class="admin-tab" data-admin-tab="audit" onclick="switchAdminTab('audit')">Audit Log</button>
+                    </div>
+                    <div id="admin-tab-users" class="admin-tab-content">
+                        <div class="admin-stats-row" id="admin-stats"></div>
+                        <div class="card">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>User</th>
+                                        <th>Email</th>
+                                        <th>Role</th>
+                                        <th>Department</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="admin-users-tbody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div id="admin-tab-roles" class="admin-tab-content hidden">
+                        <div id="admin-roles-grid" class="card-grid"></div>
+                    </div>
+                    <div id="admin-tab-org" class="admin-tab-content hidden">
+                        <div class="card" id="admin-org-details"></div>
+                    </div>
+                    <div id="admin-tab-audit" class="admin-tab-content hidden">
+                        <div class="card">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Time</th>
+                                        <th>User</th>
+                                        <th>Action</th>
+                                        <th>Entity</th>
+                                        <th>Details</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="admin-audit-tbody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <div id="modal-overlay" class="modal-overlay hidden" onclick="closeModal()">
+            <div class="modal" onclick="event.stopPropagation()">
+                <div class="modal-header">
+                    <h3 id="modal-title">Modal</h3>
+                    <button class="btn btn-ghost" onclick="closeModal()">&times;</button>
+                </div>
+                <div id="modal-body" class="modal-body"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.js"></script>
+    <script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-draw/v1.4.3/mapbox-gl-draw.js"></script>
+    <script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v5.0.2/mapbox-gl-geocoder.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@turf/turf@7/turf.min.js"></script>
+    <script src="/static/js/app.js"></script>
+</body>
+</html>
