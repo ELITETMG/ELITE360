@@ -1,0 +1,27 @@
+[project]
+name = "python-template"
+version = "0.1.0"
+description = ""
+authors = ["Your Name <you@example.com>"]
+requires-python = ">=3.11"
+dependencies = [
+    "aiofiles>=25.1.0",
+    "bcrypt>=5.0.0",
+    "ezdxf>=1.4.3",
+    "fastapi>=0.129.0",
+    "fiona>=1.10.1",
+    "geoalchemy2>=0.18.1",
+    "jinja2>=3.1.6",
+    "lxml>=6.0.2",
+    "openai>=2.21.0",
+    "openpyxl>=3.1.5",
+    "passlib>=1.7.4",
+    "psycopg2-binary>=2.9.11",
+    "python-dateutil>=2.9.0.post0",
+    "python-jose>=3.5.0",
+    "python-multipart>=0.0.22",
+    "shapely>=2.1.2",
+    "sqlalchemy>=2.0.46",
+    "starlette>=0.52.1",
+    "uvicorn>=0.41.0",
+]
