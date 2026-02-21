@@ -1,0 +1,23 @@
+services:
+  - type: web
+    name: elite360
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: elite360-db
+          property: connectionString
+      - key: SECRET_KEY
+        generateValue: true
+      - key: MAPBOX_PUBLIC_TOKEN
+        sync: false
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: PORT
+        value: "10000"
+
+databases:
+  - name: elite360-db
+    databaseName: elite360
+    plan: free
