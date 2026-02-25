@@ -2,16 +2,26 @@ import os
 import json
 from openai import OpenAI
 
-client = OpenAI(
-    api_key=os.environ.get("AI_INTEGRATIONS_OPENAI_API_KEY"),
-    base_url=os.environ.get("AI_INTEGRATIONS_OPENAI_BASE_URL"),
-)
-
 MODEL = "gpt-4o-mini"
+
+
+def _get_client() -> OpenAI | None:
+    api_key = os.environ.get("OPENAI_API_KEY")
+    if not api_key:
+        return None
+
+    base_url = os.environ.get("OPENAI_BASE_URL")
+    kwargs = {"api_key": api_key}
+    if base_url:
+        kwargs["base_url"] = base_url
+    return OpenAI(**kwargs)
 
 
 def _chat(system_prompt: str, user_prompt: str, max_tokens: int = 800) -> str:
     try:
+        client = _get_client()
+        if client is None:
+            return "AI analysis unavailable: OPENAI_API_KEY is not configured"
         resp = client.chat.completions.create(
             model=MODEL,
             messages=[

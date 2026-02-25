@@ -27,10 +27,6 @@ htmlcov/
 .vscode/
 *.swp
 
-# Replit-specific
-.replit
-replit.md
-
 # User uploads (should be on persistent storage, not in the image)
 app/static/uploads/
 

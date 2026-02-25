@@ -41,7 +41,7 @@ Enterprise-grade web application for managing Fiber-To-The-Home (FTTH) construct
 |---------|---------|---------------------|
 | PostgreSQL (Neon) | Database | `DATABASE_URL` |
 | Mapbox | Maps, geocoding, satellite imagery | `MAPBOX_PUBLIC_TOKEN` |
-| OpenAI | AI insights, briefings, anomaly detection | Managed via Replit AI Integration (`OPENAI_API_KEY`) |
+| OpenAI | AI insights, briefings, anomaly detection | `OPENAI_API_KEY` |
 
 ---
 
@@ -50,10 +50,9 @@ Enterprise-grade web application for managing Fiber-To-The-Home (FTTH) construct
 ```
 /
 ├── main.py                          # Application entry point, startup config, route registration
-├── requirements.txt                 # Python dependencies (auto-managed)
 ├── pyproject.toml                   # Python project configuration
-├── replit.md                        # Replit-specific project summary
 ├── README.md                        # This file
+├── DEPLOYMENT.md                    # Deployment + redeploy guide
 │
 ├── app/
 │   ├── core/
@@ -197,25 +196,15 @@ These must be set for the application to function:
 | `DATABASE_URL` | Yes | PostgreSQL connection string with PostGIS | `postgresql://localhost/ftth` |
 | `SECRET_KEY` | Yes | JWT signing key (change for production!) | Hard-coded dev default |
 | `MAPBOX_PUBLIC_TOKEN` | Yes | Mapbox GL JS public access token for maps | Empty string |
-| `OPENAI_API_KEY` | No | OpenAI API key for AI features | Managed by Replit integration |
-
-### Setting up on Replit
-- `DATABASE_URL` is automatically provided by Replit's built-in PostgreSQL database
-- `MAPBOX_PUBLIC_TOKEN` is stored as a Replit secret
-- `OPENAI_API_KEY` is managed by the Replit AI integration (python_openai_ai_integrations)
+| `OPENAI_API_KEY` | No | OpenAI API key for AI features | Empty string |
+| `OPENAI_BASE_URL` | No | Optional OpenAI-compatible endpoint | OpenAI default |
+| `CORS_ORIGINS` | No | Comma-separated or JSON list of allowed origins | `*` |
 
 ---
 
 ## Running the Application
 
-### On Replit
-The application runs automatically via the configured workflow:
-```bash
-python main.py
-```
-This starts Uvicorn on `0.0.0.0:5000`.
-
-### On Another Host / Local Development
+### Local Development
 
 1. **Install Python 3.11+**
 
@@ -237,11 +226,7 @@ This starts Uvicorn on `0.0.0.0:5000`.
 
 4. **Install Python dependencies**
    ```bash
-   pip install -r requirements.txt
-   ```
-   If `requirements.txt` doesn't exist, install these core packages:
-   ```bash
-   pip install fastapi uvicorn sqlalchemy geoalchemy2 psycopg2-binary python-jose passlib bcrypt python-multipart jinja2 aiofiles openai fiona shapely ezdxf lxml openpyxl httpx numpy pydantic
+   pip install .
    ```
 
 5. **Set environment variables**
@@ -250,6 +235,7 @@ This starts Uvicorn on `0.0.0.0:5000`.
    export SECRET_KEY="your-secure-secret-key-here"
    export MAPBOX_PUBLIC_TOKEN="pk.your_mapbox_token_here"
    export OPENAI_API_KEY="sk-your-openai-key-here"  # Optional, for AI features
+   export CORS_ORIGINS="http://localhost:5000"
    ```
 
 6. **Run the application**
@@ -261,6 +247,8 @@ This starts Uvicorn on `0.0.0.0:5000`.
 ---
 
 ## Deploy to Render
+
+For a faster deployment/redeployment path, see `DEPLOYMENT.md`.
 
 ### One-Click Deployment via Render Blueprint
 
@@ -305,7 +293,7 @@ Render's filesystem is **ephemeral** – files written to `app/static/uploads/` 
 
 ---
 
-## Migration Guide (Moving Off Replit)
+## Migration Guide (Moving Between Hosts)
 
 ### Critical Steps
 
@@ -321,7 +309,6 @@ Render's filesystem is **ephemeral** – files written to `app/static/uploads/` 
    ```
 
 2. **Environment Variables**
-   - Copy all secrets from Replit's Secrets tab
    - `DATABASE_URL` must point to your new PostgreSQL instance (must have PostGIS)
    - `SECRET_KEY` should be regenerated for production
    - `MAPBOX_PUBLIC_TOKEN` get from your Mapbox account (mapbox.com)
@@ -349,15 +336,14 @@ Render's filesystem is **ephemeral** – files written to `app/static/uploads/` 
    ```
 
 6. **CORS Configuration**
-   Update the CORS settings in `main.py` if deploying frontend and backend on different domains:
-   ```python
-   app.add_middleware(
-       CORSMiddleware,
-       allow_origins=["https://your-domain.com"],
-       allow_credentials=True,
-       allow_methods=["*"],
-       allow_headers=["*"],
-   )
+   Set `CORS_ORIGINS` in the environment when frontend and backend use different domains.
+   Examples:
+   ```bash
+   CORS_ORIGINS="https://app.yourdomain.com,https://admin.yourdomain.com"
+   ```
+   or
+   ```bash
+   CORS_ORIGINS='["https://app.yourdomain.com"]'
    ```
 
 7. **Cache Headers**
@@ -382,8 +368,8 @@ Render's filesystem is **ephemeral** – files written to `app/static/uploads/` 
 | Database URL | `app/core/config.py` | Update `DATABASE_URL` env var |
 | JWT Secret | `app/core/config.py` | Set strong `SECRET_KEY` env var |
 | Mapbox Token | `app/core/config.py` | Set `MAPBOX_PUBLIC_TOKEN` env var |
-| OpenAI Key | Environment | Set `OPENAI_API_KEY` env var (currently via Replit integration) |
-| CORS Origins | `main.py` | Update allowed origins for your domain |
+| OpenAI Key | Environment | Set `OPENAI_API_KEY` env var |
+| CORS Origins | `app/core/config.py` | Set `CORS_ORIGINS` env var for your domain |
 | Static Files | `main.py` | Consider serving via nginx/CDN in production |
 | Upload Path | `main.py` | `app/static/uploads/` - ensure writable + persistence |
 | Startup Seed | `main.py` | `@app.on_event("startup")` creates demo data on first run |
@@ -398,9 +384,8 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
+RUN pip install --no-cache-dir .
 
 EXPOSE 5000
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "5000", "--workers", "4"]
@@ -475,7 +460,7 @@ The app will fail on startup if PostGIS isn't enabled. Run `CREATE EXTENSION pos
 Ensure `MAPBOX_PUBLIC_TOKEN` is set. Get a free token from mapbox.com.
 
 **AI features not working:**
-Set `OPENAI_API_KEY`. On Replit, this is managed automatically via the AI integration.
+Set `OPENAI_API_KEY`.
 
 **Sidebar nav items not visible:**
 All 15 nav items are in a scrollable sidebar. Scroll down to see Billing, Dispatch, and Admin.

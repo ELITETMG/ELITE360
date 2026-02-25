@@ -2,7 +2,14 @@ services:
   - type: web
     name: elite360
     runtime: docker
+    plan: starter
     dockerfilePath: ./Dockerfile
+    autoDeploy: true
+    healthCheckPath: /health
+    disk:
+      name: uploads
+      mountPath: /app/app/static/uploads
+      sizeGB: 10
     envVars:
       - key: DATABASE_URL
         fromDatabase:
@@ -14,10 +21,14 @@ services:
         sync: false
       - key: OPENAI_API_KEY
         sync: false
+      - key: OPENAI_BASE_URL
+        sync: false
+      - key: CORS_ORIGINS
+        sync: false
       - key: PORT
         value: "10000"
 
 databases:
   - name: elite360-db
     databaseName: elite360
-    plan: free
+    plan: starter

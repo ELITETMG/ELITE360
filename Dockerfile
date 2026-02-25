@@ -18,13 +18,12 @@ ENV PROJ_DIR=/usr
 
 WORKDIR /app
 
-# Install pip build tools and the project dependencies from pyproject.toml
-COPY pyproject.toml ./
+# Copy the full source first so `pip install .` has package code available
+COPY . .
+
+# Install pip build tools and project dependencies from pyproject.toml
 RUN pip install --no-cache-dir --upgrade pip && \
     pip install --no-cache-dir . gunicorn "uvicorn[standard]"
-
-# Copy the rest of the application source
-COPY . .
 
 # Render injects $PORT at runtime; default to 10000 for local testing
 ENV PORT=10000

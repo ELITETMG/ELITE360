@@ -1,0 +1,26 @@
+name: Render Redeploy
+
+on:
+  workflow_dispatch:
+
+jobs:
+  smoke-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate Python syntax
+        run: python3 -m compileall main.py app
+
+  redeploy:
+    runs-on: ubuntu-latest
+    needs: smoke-check
+    steps:
+      - name: Trigger Render deploy hook
+        if: ${{ secrets.RENDER_DEPLOY_HOOK_URL != '' }}
+        run: curl --fail --silent --show-error -X POST "${{ secrets.RENDER_DEPLOY_HOOK_URL }}"
+
+      - name: No deploy hook configured
+        if: ${{ secrets.RENDER_DEPLOY_HOOK_URL == '' }}
+        run: echo "Set RENDER_DEPLOY_HOOK_URL to support explicit redeploys from GitHub Actions."
